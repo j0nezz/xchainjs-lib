@@ -196,17 +196,12 @@ export default class Client extends BaseXChainClient implements XChainClient, Et
     if (this.infuraCreds) {
       // Infura provider takes either a string of project id
       // or an object of id and secret
-      const testnetProvider = this.infuraCreds.projectSecret
-        ? new ethers.providers.InfuraProvider(EthNetwork.Test, this.infuraCreds)
-        : new ethers.providers.InfuraProvider(EthNetwork.Test, this.infuraCreds.projectId)
       const mainnetProvider = this.infuraCreds.projectSecret
         ? new ethers.providers.InfuraProvider(EthNetwork.Main, this.infuraCreds)
         : new ethers.providers.InfuraProvider(EthNetwork.Main, this.infuraCreds.projectId)
-      this.providers.set(Network.Testnet, testnetProvider)
       this.providers.set(Network.Mainnet, mainnetProvider)
       this.providers.set(Network.Stagenet, mainnetProvider)
     } else {
-      this.providers.set(Network.Testnet, getDefaultProvider(EthNetwork.Test))
       this.providers.set(Network.Mainnet, getDefaultProvider(EthNetwork.Main))
       this.providers.set(Network.Stagenet, getDefaultProvider(EthNetwork.Main))
     }
