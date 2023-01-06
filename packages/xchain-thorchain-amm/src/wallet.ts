@@ -21,6 +21,18 @@ type AllBalances = {
   balances: Balance[] | string
 }
 
+type ChainClients = {
+  BCH?: BchClient
+  BTC?: BtcClient
+  DOGE?: DogeClient
+  ETH?: EthClient
+  THOR?: ThorClient
+  LTC?: LtcClient
+  BNB?: BnbClient
+  GAIA?: CosmosClient
+  AVAX?: AvaxClient
+}
+
 /**
  * Wallet Class for managing all xchain-* wallets with a mnemonic seed.
  */
@@ -34,22 +46,23 @@ export class Wallet {
    *
    * @param phrase - mnemonic phrase
    * @param thorchainCache - an instance of the ThorchainCache (could be pointing to stagenet,testnet,mainnet)
+   * @param clients - optional chain clients to allow custom configuration per client
    * @returns Wallet
    */
-  constructor(phrase: string, thorchainQuery: ThorchainQuery) {
+  constructor(phrase: string, thorchainQuery: ThorchainQuery, clients?: ChainClients) {
     this.thorchainQuery = thorchainQuery
 
     const settings = { network: thorchainQuery.thorchainCache.midgard.network, phrase }
     this.clients = {
-      BCH: new BchClient(settings),
-      BTC: new BtcClient(settings),
-      DOGE: new DogeClient(settings),
-      ETH: new EthClient(settings),
-      THOR: new ThorClient(settings),
-      LTC: new LtcClient(settings),
-      BNB: new BnbClient(settings),
-      GAIA: new CosmosClient(settings),
-      AVAX: new AvaxClient({ ...defaultAvaxParams, network: settings.network, phrase }),
+      BCH: clients?.BCH ?? new BchClient(settings),
+      BTC: clients?.BTC ?? new BtcClient(settings),
+      DOGE: clients?.DOGE ?? new DogeClient(settings),
+      ETH: clients?.ETH ?? new EthClient(settings),
+      THOR: clients?.THOR ?? new ThorClient(settings),
+      LTC: clients?.LTC ?? new LtcClient(settings),
+      BNB: clients?.BNB ?? new BnbClient(settings),
+      GAIA: clients?.GAIA ?? new CosmosClient(settings),
+      AVAX: clients?.AVAX ?? new AvaxClient({ ...defaultAvaxParams, network: settings.network, phrase }),
     }
     this.ethHelper = new EthHelper(this.clients.ETH, this.thorchainQuery.thorchainCache)
   }
